@@ -1,0 +1,44 @@
+name: Terraform
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - '**/*.tf'
+  workflow_dispatch:
+  
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  plan-and-apply:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::130900203380:role/tenzin-io.public-ecr
+          aws-region: us-east-1
+
+      - name: Run Terraform Init
+        run: terraform init
+        
+      - name: Run Terraform Format
+        run: terraform fmt -check
+        
+      - name: Run Terraform Validate
+        run: terraform validate
+
+      - name: Run Terraform Plan
+        run: terraform plan
+
+      - name: Run Terraform Apply
+        run: terraform apply -auto-approve
