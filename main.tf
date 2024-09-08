@@ -35,6 +35,6 @@ resource "aws_ecrpublic_repository" "actions_runner_nvidia" {
   }
 
   tags = {
-    "repository-url" = "production"
+    "repository-url" = "https://github.com/tenzin-io/containers"
   }
 }
